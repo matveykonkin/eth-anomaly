@@ -1,15 +1,25 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
-final_df = pd.read_csv('data/processed/features.csv')
+# Isolation Forest model
+labeled_df = pd.read_csv(r'C:\Users\matve\OneDrive\Документы\projects\anomaly\data\models_data\iso_forest.csv')
 
-plt.hist(final_df['eth_value'], bins=50)
-plt.title('Распределение сумм транзакций')
-plt.xlabel('Сумма в ETH')
-plt.ylabel('Количество транзакций')
+anomalies = labeled_df[labeled_df['is_anomaly'] == -1]
+normal = labeled_df[labeled_df['is_anomaly'] == 1]
 
-plt.show()
+plt.figure(figsize=(12, 6))
 
-plt.hist(final_df['eth_gas_cost'], bins=50)
-plt.title('Распределение стоимости газа')
+plt.hist(normal['anomaly_score'], bins=50, alpha=0.7, label='Нормальные', 
+         color='blue', density=True)
+plt.hist(anomalies['anomaly_score'], bins=50, alpha=0.7, label='Аномалии', 
+         color='red', density=True)
+
+plt.axvline(x=0, color='black', linestyle='--', linewidth=2, label='Граница аномалий')
+plt.xlabel('Anomaly Score')
+plt.ylabel('Плотность распределения')
+plt.title('Распределение оценок аномальности')
+plt.legend()
+plt.grid(True, alpha=0.3)
+plt.savefig('iso_forest.png', dpi=300, bbox_inches='tight')
 plt.show()
