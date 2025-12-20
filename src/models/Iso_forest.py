@@ -75,7 +75,7 @@ X_scaled = scaler.fit_transform(X)
 
 model = IsolationForest(
     n_estimators=100,
-    contamination='auto',
+    contamination=0.1,
     random_state=42
 )
 
@@ -90,8 +90,12 @@ final_df['is_anomaly'] = predictions
 anomalies = final_df[final_df['is_anomaly'] == -1]
 normal = final_df[final_df['is_anomaly'] == 1]
 
-output_path = r'C:\Users\matve\OneDrive\Документы\projects\anomaly\data\models_data\iso_forest_enriched.csv'
-final_df.to_csv(output_path, index=False)
+sorted_final_df = final_df.sort_values('anomaly_score')
+columns = ['blockHash', 'transactionIndex', 'timeStamp', 'nonce', 'from', 'to', 'eth_value', 'eth_gas_cost', 'gas_used_ratio', 'anomaly_score', 'is_anomaly']
+filtered_df = sorted_final_df[columns]
+
+output_path = r'C:\Users\matve\OneDrive\Документы\projects\anomaly\data\models_data\iso_forest.csv'
+filtered_df.to_csv(output_path, index=False)
 
 print(f"The {model} model is applied")
 print(f"Data saved in {output_path}")
